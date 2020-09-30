@@ -48,14 +48,14 @@ def numberToBase(n, b):
 
 
 def AES_Encryption():
-    obj = AES.new(AES_key, AES.MODE_CFB, AES_IV)
+    obj = AES.new(AES_key.encode('utf8'), AES.MODE_CFB, AES_IV.encode('utf8'))
     cT = obj.encrypt(imgBytes)
 
     return cT
 
 
 def AES_Decryption():
-    obj2 = AES.new(AES_key, AES.MODE_CFB, AES_IV)
+    obj2 = AES.new(AES_key.encode('utf8'), AES.MODE_CFB, AES_IV.encode('utf8'))
     pT = obj2.decrypt(imgBytes)
 
     return list(pT)
@@ -119,13 +119,13 @@ def ECC_Encryption():
         d1i = 0
         d2i = 0
         d3i = 0
-    for j in range(len(g1i)):
-        d1i += g1i[j]*powersOf256[j]
-        d2i += g2i[j]*powersOf256[j]
-        d3i += g3i[j]*powersOf256[j]
-    bigIntList1.append(d1i)
-    bigIntList2.append(d2i)
-    bigIntList3.append(d3i)
+        for j in range(len(g1i)):
+            d1i += g1i[j]*powersOf256[j]
+            d2i += g2i[j]*powersOf256[j]
+            d3i += g3i[j]*powersOf256[j]
+        bigIntList1.append(d1i)
+        bigIntList2.append(d2i)
+        bigIntList3.append(d3i)
 
     if len(bigIntList1) % 2 != 0:
         bigIntList1.append(255)
@@ -136,6 +136,7 @@ def ECC_Encryption():
     cipherImg2 = []
     cipherImg3 = []
     Z = alphaBetaG
+    #print(len(bigIntList1))
     for i in range(0, len(bigIntList1), 2):
         # R
         l0, l1 = base256OfCiPi(bigIntList1, i, Z, "C")
@@ -224,6 +225,8 @@ testImg = "./cat.png"
 img = Image.open(testImg)
 img = img.convert("RGB")
 w, h = img.size
+print(w)
+print(h)
 rList = []
 gList = []
 bList = []
@@ -245,9 +248,12 @@ cT3 = AES_Encryption()
 #print(len(cT3), len(imgBytes))
 cR, cG, cB = ECC_Encryption()
 lenCi = len(cR)
-# print(lenCi)
+print(lenCi)
+print(len(cG))
 height = (lenCi//256)+1
 width = 256
+#print(height)
+#height=20
 encryptedImg = Image.new(img.mode, (width, height))
 eI = encryptedImg.load()
 k = 0
